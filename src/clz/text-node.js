@@ -1,6 +1,7 @@
 export default class TextNode {
   constructor (text) {
-    this.text = text
+    this.data = text
+    this.type = 'text'
     this.nodeType = 3
   }
 }

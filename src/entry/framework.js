@@ -1,3 +1,6 @@
+/**
+ * for JavaScript Core
+ */
 import doc from 'api/doc'
 import nav from 'api/nav'
 import bridge from 'util/bridge'

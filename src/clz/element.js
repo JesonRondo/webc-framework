@@ -1,28 +1,23 @@
+import CSSStyleDeclaration from 'clz/CSSStyleDeclaration'
+
 export default class Element {
   constructor (tag) {
-    this.tag = tag
-    this.parent = undefined
+    this.type = 'tag'
+    this.name = tag
     this.nodeType = 1
+    this.parent = undefined
     this.children = []
 
-    this.sty = {}
-    this.attrs = {}
-  }
-
-  set style (v) {
-    console.log(v)
-  }
-
-  get style () {
-    return {a: 1}
+    this.style = new CSSStyleDeclaration()
+    this.attribs = {}
   }
 
   hasAttribute (key) {
-    return !!this.attrs[key]
+    return !!this.attribs[key]
   }
 
   setAttribute (key, val) {
-    this.attrs[key] = val
+    this.attribs[key] = val
   }
 
   insertBefore (node, reference) {
@@ -56,6 +51,6 @@ export default class Element {
   }
 
   get tagName () {
-    return this.tag
+    return this.name
   }
 }

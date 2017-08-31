@@ -1,28 +1,28 @@
 const bridge = {
   navigation: {
-    openView (id) {
-      __bridge.call('navigation.openView', {
-        id: id
+    push (path) {
+      __bridge.call('navigation.push', {
+        path
       })
     }
   },
   nodeOpt: {
     addStyleElement (target, elm) {
       __bridge.call('nodeOpt.addStyleElement', {
-        target: target,
+        target,
         element: elm
       })
     },
     appendStyleNode (target, elm, node) {
       __bridge.call('nodeOpt.appendStyleNode', {
-        target: target,
+        target,
         element: elm,
         node: node
       })
     },
     mount (target, html) {
       __bridge.call('nodeOpt.mount', {
-        target: target,
+        target,
         html: html
       })
     }

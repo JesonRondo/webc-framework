@@ -1,16 +1,21 @@
 const path = require('path')
 
-const replace = require('rollup-plugin-replace')
+const buble = require('rollup-plugin-buble')
 const alias = require('rollup-plugin-alias')
+const replace = require('rollup-plugin-replace')
 
 const version = 1
 
-const banner =
-  '/*!\n' +
-  ' * framework.js v' + version + '\n' +
-  ' * (c) 2014-' + new Date().getFullYear() + ' LongZhou\n' +
-  ' * Released under the MIT License.\n' +
-  ' */'
+function banner (name) {
+  return '/*!\n' +
+          ' * ' + name + '.js v' + version + '\n' +
+          ' * (c) 2014-' + new Date().getFullYear() + ' LongZhou\n' +
+          ' * Released under the MIT License.\n' +
+          ' */'
+}
+
+const frameworkBanner = banner('framework')
+const bridgeBanner = banner('jsbridge')
 
 const aliases = require('./alias')
 
@@ -24,12 +29,33 @@ const resolve = p => {
 }
 
 const builds = {
-  'dev': {
-    entry: resolve('src/index.js'),
+  'framework-dev': {
+    entry: resolve('src/entry/framework.js'),
     dest: resolve('dist/framework.js'),
     format: 'umd',
     env: 'development',
-    banner
+    banner: frameworkBanner
+  },
+  'framework-prod': {
+    entry: resolve('src/entry/framework.js'),
+    dest: resolve('dist/framework.min.js'),
+    format: 'umd',
+    env: 'production',
+    banner: frameworkBanner
+  },
+  'jsbridge-es': {
+    entry: resolve('src/entry/jsbridge.js'),
+    dest: resolve('dist/jsbridge.js'),
+    format: 'es',
+    env: 'development',
+    banner: bridgeBanner
+  },
+  'jsbridge-prod': {
+    entry: resolve('src/entry/jsbridge.js'),
+    dest: resolve('dist/jsbridge.min.js'),
+    format: 'umd',
+    env: 'production',
+    banner: bridgeBanner
   }
 }
 
@@ -43,6 +69,7 @@ function genConfig (opts) {
     banner: opts.banner,
     name: 'webc',
     plugins: [
+      buble(),
       alias(Object.assign({}, aliases, opts.alias))
     ]
   }
@@ -59,5 +86,6 @@ function genConfig (opts) {
 if (process.env.TARGET) {
   module.exports = genConfig(builds[process.env.TARGET])
 } else {
-  throw 'no target'
+  exports.getBuild = name => genConfig(builds[name])
+  exports.getAllBuilds = () => Object.keys(builds).map(name => genConfig(builds[name]))
 }

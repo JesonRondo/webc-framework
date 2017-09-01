@@ -3,10 +3,48 @@
  * (c) 2014-2017 LongZhou
  * Released under the MIT License.
  */
+// 添加参数
+var appendParams = function (url, data) {
+  var appendSign = url.indexOf('?') > -1 ? '&' : '?';
+  var hashSplitArr = url.split('#');
+
+  var strArr = [];
+  for (var d in data) {
+    strArr.push((d + "=" + (encodeURIComponent(data[d]))));
+  }
+
+  hashSplitArr[0] += appendSign + strArr.join('&');
+  return hashSplitArr.join('#')
+};
+
 var bridge$1 = {
-  navigation: {
+  request: function request (opts) {
+    var options = {
+      url: opts.url,
+      method: opts.method || 'GET',
+      dataType: opts.dataType || 'json'
+    };
+
+    if (options.method === 'GET') {
+      if (opts.data) {
+        options.url = appendParams(options.url, opts.data);
+      }
+    }
+
+    __bridge.call('request', {
+      opts: options
+    }, function (err, res) {
+      if (err) {
+        opts.fail && opts.fail();
+      } else {
+        opts.success && opts.success(res);
+      }
+      opts.complete && opts.complete();
+    });
+  },
+  navigate: {
     push: function push (path) {
-      __bridge.call('navigation.push', {
+      __bridge.call('navigate.push', {
         path: path
       });
     }
@@ -25,14 +63,16 @@ var bridge$1 = {
         node: node
       });
     },
-    mount: function mount (target, html) {
-      __bridge.call('nodeOpt.mount', {
+    patch: function patch (target, html) {
+      __bridge.call('nodeOpt.patch', {
         target: target,
         html: html
       });
     }
   }
 };
+
+var jsonp = require('jsonp');
 
 var viewMap = {};
 
@@ -64,7 +104,23 @@ var mockApi = {
     var name;
 
     switch (cmd) {
-      case 'navigation.push':
+      case 'request':
+        var opts = data.opts;
+        if (opts.method === 'GET') {
+          jsonp(opts.url, function (err, data) {
+            callback(err, {
+              header: {},
+              statusCode: 200,
+              data: data
+            });
+          });
+        } else {
+          throw 'not support POST in browser'
+        }
+
+        break
+
+      case 'navigate.push':
         name = data.path;
         viewMap[name] = {
           win: open('/static/view.html', name),
@@ -83,7 +139,7 @@ var mockApi = {
         }, 1000);
         break
 
-      case 'nodeOpt.mount':
+      case 'nodeOpt.patch':
       case 'nodeOpt.addStyleElement':
       case 'nodeOpt.appendStyleNode':
         name = data.target;
@@ -91,7 +147,7 @@ var mockApi = {
         break
 
       default:
-        console.log(cmd);
+        console.log('unkown bridge: ' + cmd);
         break
     }
   }

@@ -20,6 +20,10 @@ export default class Element {
     this.attribs[key] = val
   }
 
+  getAttribute (key) {
+    this.attribs[key]
+  }
+
   insertBefore (node, reference) {
     node.parent = this
     this.children.splice(this.children.indexOf(reference), 0, node)

@@ -44,14 +44,14 @@ const builds = {
     banner: frameworkBanner
   },
   'jsbridge-es': {
-    entry: resolve('src/entry/jsbridge.js'),
+    entry: resolve('src/entry/jsbridge-web.js'),
     dest: resolve('dist/jsbridge.js'),
     format: 'es',
     env: 'development',
     banner: bridgeBanner
   },
   'jsbridge-prod': {
-    entry: resolve('src/entry/jsbridge.js'),
+    entry: resolve('src/entry/jsbridge-web.js'),
     dest: resolve('dist/jsbridge.min.js'),
     format: 'umd',
     env: 'production',

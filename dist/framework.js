@@ -498,7 +498,8 @@ var TextNode = function TextNode (text) {
 };
 
 var TextNode$2 = function TextNode (text) {
-  this.text = text;
+  this.data = text;
+  this.type = 'comment';
   this.nodeType = 8;
 };
 
@@ -537,10 +538,48 @@ var nav = {
   userAgent: 'WebC/1.0 WebCApi/1.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143'
 };
 
+// 添加参数
+var appendParams = function (url, data) {
+  var appendSign = url.indexOf('?') > -1 ? '&' : '?';
+  var hashSplitArr = url.split('#');
+
+  var strArr = [];
+  for (var d in data) {
+    strArr.push((d + "=" + (encodeURIComponent(data[d]))));
+  }
+
+  hashSplitArr[0] += appendSign + strArr.join('&');
+  return hashSplitArr.join('#')
+};
+
 var bridge = {
-  navigation: {
+  request: function request (opts) {
+    var options = {
+      url: opts.url,
+      method: opts.method || 'GET',
+      dataType: opts.dataType || 'json'
+    };
+
+    if (options.method === 'GET') {
+      if (opts.data) {
+        options.url = appendParams(options.url, opts.data);
+      }
+    }
+
+    __bridge.call('request', {
+      opts: options
+    }, function (err, res) {
+      if (err) {
+        opts.fail && opts.fail();
+      } else {
+        opts.success && opts.success(res);
+      }
+      opts.complete && opts.complete();
+    });
+  },
+  navigate: {
     push: function push (path) {
-      __bridge.call('navigation.push', {
+      __bridge.call('navigate.push', {
         path: path
       });
     }

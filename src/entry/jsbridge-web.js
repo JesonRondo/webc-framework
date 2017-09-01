@@ -2,7 +2,7 @@
  * for Web
  */
 import bridge from 'util/bridge'
-import mockApi from 'util/bridge-mock-api'
+import mockApi from 'mock/bridge-api'
 
 if (navigator.userAgent.indexOf('WebC') < 0) { // for web debug
   const win = window

@@ -1,3 +1,5 @@
+const jsonp = require('jsonp')
+
 const viewMap = {}
 
 function poster (win, msg) {
@@ -28,7 +30,23 @@ export default {
     let name
 
     switch (cmd) {
-      case 'navigation.push':
+      case 'request':
+        const opts = data.opts
+        if (opts.method === 'GET') {
+          jsonp(opts.url, (err, data) => {
+            callback(err, {
+              header: {},
+              statusCode: 200,
+              data: data
+            })
+          })
+        } else {
+          throw 'not support POST in browser'
+        }
+
+        break
+
+      case 'navigate.push':
         name = data.path
         viewMap[name] = {
           win: open('/static/view.html', name),
@@ -45,7 +63,7 @@ export default {
         }, 1000)
         break
 
-      case 'nodeOpt.mount':
+      case 'nodeOpt.patch':
       case 'nodeOpt.addStyleElement':
       case 'nodeOpt.appendStyleNode':
         name = data.target
@@ -53,7 +71,7 @@ export default {
         break
 
       default:
-        console.log(cmd)
+        console.log('unkown bridge: ' + cmd)
         break
     }
   }

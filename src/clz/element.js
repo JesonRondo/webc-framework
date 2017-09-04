@@ -1,4 +1,5 @@
 import CSSStyleDeclaration from 'clz/CSSStyleDeclaration'
+import { changeSign } from 'util/dom'
 
 export default class Element {
   constructor (tag) {
@@ -18,25 +19,29 @@ export default class Element {
 
   setAttribute (key, val) {
     this.attribs[key] = val
+    changeSign(this)
   }
 
   getAttribute (key) {
-    this.attribs[key]
+    return this.attribs[key]
   }
 
   insertBefore (node, reference) {
     node.parent = this
     this.children.splice(this.children.indexOf(reference), 0, node)
+    changeSign(this)
   }
 
   removeChild (child) {
     child.parent = undefined
     this.children.splice(this.children.indexOf(child), 1)
+    changeSign(this)
   }
 
   appendChild (child) {
     child.parent = this
     this.children.push(child)
+    changeSign(this)
   }
 
   get parentNode () {

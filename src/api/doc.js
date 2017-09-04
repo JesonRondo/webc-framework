@@ -1,6 +1,7 @@
 import Element from 'clz/element'
 import TextNode from 'clz/text-node'
 import Comment from 'clz/comment'
+import { changeSign } from 'util/dom'
 
 class Document {
   constructor () {
@@ -9,7 +10,9 @@ class Document {
   }
 
   createElement (tag) {
-    return new Element(tag)
+    const el = new Element(tag)
+    changeSign(el)
+    return el
   }
 
   createTextNode (text) {
